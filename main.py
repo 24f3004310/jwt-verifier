@@ -47,9 +47,10 @@ async def verify_token(payload: TokenRequest):
             "aud": decoded_claims.get("aud")
         }
         
-    except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
-        # If the token is expired, tampered with, or has wrong claims, reject it.
-        raise HTTPException(
+    except Exception:
+        # Catch ANY token validation failure or environment error 
+        # and return a clean JSON structure without the "detail" wrapper
+        return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"valid": False}
+            content={"valid": False}
         )
